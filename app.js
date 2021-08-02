@@ -1,25 +1,27 @@
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const schema = require("./schema/schema");
-const mysql = require("mysql")
+const { Sequelize } = require('sequelize');
 require("dotenv").config()
 
 const app = express();
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.log("Error connecting to DB: " + err.stack);
-    return;
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: "mysql"
   }
-  console.log("connected successfully to DB (ID: " + connection.threadId + ")");
-})
+);
+
+try {
+  sequelize.authenticate().then(() => {
+    console.log("DB Connection Established Successfully");
+  });
+} catch (error) {
+  console.error("Unable to connect to database", error);
+}
 
 app.use("/graphql", graphqlHTTP({
   schema, // schema: schema - as both names are the same
