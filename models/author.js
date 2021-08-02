@@ -1,9 +1,5 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-
-class Author extends Model{}
-
-module.exports = (sequelize) => {
-  Author.init({
+module.exports = (sequelize, DataTypes) => {
+  return sequelize.define('authors', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -17,9 +13,5 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-  }, {
-    sequelize,
-    modelName: 'authors',
   })
-  console.log("AUTHORS", Author === sequelize.models.authors); // true
 };

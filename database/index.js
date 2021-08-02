@@ -1,4 +1,5 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
+require("dotenv").config()
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -9,14 +10,14 @@ const sequelize = new Sequelize(
   }
 );
 
-const modelDefiners = [
-  require("../models/author"),
-  require("../models/book"),
-];
+const models = {
+  "author": require("../models/author"),
+  "book": require("../models/book"),
+}
 
 // We define all models according to their files.
-for (const modelDefiner of modelDefiners) {
-  modelDefiner(sequelize);
+for (const [key, value] of Object.entries(models)) {
+  module.exports[key] = value(sequelize, DataTypes);
 }
 
 module.exports.databaseConnection = sequelize
